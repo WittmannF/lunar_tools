@@ -8,7 +8,6 @@ import os
 import time
 from openai import OpenAI
 from lunar_tools.logprint import LogPrint
-import simpleaudio
 from elevenlabs.client import ElevenLabs
 from elevenlabs import Voice, VoiceSettings, play, save
 import sounddevice as sd
@@ -16,6 +15,7 @@ import numpy as np
 import wave
 from pydub import AudioSegment
 from lunar_tools.utils import read_api_key
+from pydub.playback import play
 
 class AudioRecorder:
     """
@@ -412,17 +412,10 @@ class Text2SpeechElevenlabs:
 class SoundPlayer:
     def __init__(self, blocking_playback=False):
         self._play_thread = None
-        self._playback_object = None
         self.blocking_playback = blocking_playback
 
     def _play_sound_threaded(self, sound):
-        self._playback_object = simpleaudio.play_buffer(
-            sound.raw_data,
-            num_channels=sound.channels,
-            bytes_per_sample=sound.sample_width,
-            sample_rate=sound.frame_rate
-        )
-        self._playback_object.wait_done()  # Wait until sound has finished playing
+        play(sound)
 
     def play_sound(self, file_path, pan_value=0):
         # Stop any currently playing sound
@@ -443,8 +436,6 @@ class SoundPlayer:
 
     def stop_sound(self):
         if self._play_thread and self._play_thread.is_alive():
-            if self._playback_object:
-                self._playback_object.stop()
             self._play_thread.join()
 
     
