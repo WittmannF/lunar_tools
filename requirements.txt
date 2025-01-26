@@ -21,7 +21,6 @@ replicate
 Requests
 rich
 setuptools
-simpleaudio
 sounddevice
 tqdm
 pyusb
